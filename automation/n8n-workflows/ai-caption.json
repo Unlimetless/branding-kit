@@ -1,0 +1,115 @@
+{
+  "name": "BrandFlow - AI Caption",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "brandflow-ai-caption",
+        "method": "POST",
+        "responseMode": "responseNode"
+      },
+      "id": "trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body;\nconst crypto = require('crypto');\nconst cacheKey = crypto.createHash('md5').update(body.contentId + body.locale + 'caption').digest('hex');\n\nreturn [{\n  json: {\n    contentId: body.contentId,\n    userId: body.userId,\n    locale: body.locale || 'ka',\n    cacheKey: cacheKey,\n    sector: body.sector || 'general',\n    brandTone: body.brandTone || 'professional',\n    imageUrl: body.imageUrl\n  }\n}];"
+      },
+      "id": "parse-input",
+      "name": "Parse Input",
+      "type": "n8n-nodes-base.code",
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.BACKEND_API_URL }}/api/ai-cache/{{ $json.cacheKey }}",
+        "options": {}
+      },
+      "id": "check-cache",
+      "name": "Check Cache",
+      "type": "httpRequest",
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.GEMINI_API_URL }}/generate",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"prompt\": \"Generate a social media caption for a {{ $json.sector }} business. Tone: {{ $json.brandTone }}. Language: {{ $json.locale }}. Respond in JSON format: {\\\"caption\\\": \\\"...\\\", \\\"hashtags\\\": [\\\"#tag1\\\", \\\"#tag2\\\"]}\",\n  \"image_url\": \"{{ $json.imageUrl }}\",\n  \"locale\": \"{{ $json.locale }}\"\n}",
+        "options": {}
+      },
+      "id": "gemini-caption",
+      "name": "Generate Caption",
+      "type": "httpRequest",
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BACKEND_API_URL }}/api/ai-cache/store",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"cache_key\": \"{{ $json.cacheKey }}\",\n  \"user_id\": \"{{ $json.userId }}\",\n  \"result\": {{ $json.geminiResult }},\n  \"model\": \"gemini-flash\",\n  \"locale\": \"{{ $json.locale }}\"\n}",
+        "options": {}
+      },
+      "id": "store-cache",
+      "name": "Store Cache",
+      "type": "httpRequest",
+      "position": [960, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BACKEND_API_URL }}/api/contents/{{ $json.contentId }}/caption",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"caption\": \"{{ $json.caption }}\",\n  \"hashtags\": {{ $json.hashtags }},\n  \"locale\": \"{{ $json.locale }}\"\n}",
+        "options": {}
+      },
+      "id": "update-content",
+      "name": "Update Content",
+      "type": "httpRequest",
+      "position": [1200, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": {},
+        "respondWithSuccess": true,
+        "responseBody": {
+          "success": true,
+          "caption": "{{ $json.caption }}",
+          "hashtags": "{{ $json.hashtags }}",
+          "cached": false
+        }
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [1440, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [[{"node": "Parse Input", "type": "main", "index": 0}]]
+    },
+    "Parse Input": {
+      "main": [[{"node": "Check Cache", "type": "main", "index": 0}]]
+    },
+    "Check Cache": {
+      "main": [[{"node": "Generate Caption", "type": "main", "index": 0}]]
+    },
+    "Generate Caption": {
+      "main": [[{"node": "Store Cache", "type": "main", "index": 0}]]
+    },
+    "Store Cache": {
+      "main": [[{"node": "Update Content", "type": "main", "index": 0}]]
+    },
+    "Update Content": {
+      "main": [[{"node": "Respond", "type": "main", "index": 0}]]
+    }
+  }
+}

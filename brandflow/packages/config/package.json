@@ -1,0 +1,9 @@
+{
+  "name": "@brandflow/config",
+  "version": "0.0.1",
+  "private": true,
+  "files": ["tsconfig.json"],
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}

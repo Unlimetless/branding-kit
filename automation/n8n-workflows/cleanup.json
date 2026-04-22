@@ -1,0 +1,137 @@
+{
+  "name": "BrandFlow - Cleanup",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cron",
+              "expression": "0 */1 * * *"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Every Hour",
+      "type": "n8n-nodes-base.trigger",
+      "position": [0, 300]
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "bucket": "brandflow-temp",
+        "fileName": "*",
+        "returnAll": true,
+        "options": {
+          "includeBody": true
+        }
+      },
+      "id": "minio-list",
+      "name": "List Temp Files",
+      "type": "awsS3",
+      "position": [240, 300],
+      "credentials": "minio"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst now = new Date();\nconst thirtyMinutesAgo = new Date(now.getTime() - 30 * 60 * 1000);\n\nconst oldFiles = items.filter(item => {\n  const lastModified = new Date(item.json.lastModified);\n  return lastModified < thirtyMinutesAgo;\n}).map(item => ({\n  bucket: item.json.bucket,\n  key: item.json.key,\n  lastModified: item.json.lastModified,\n  size: item.json.size\n}));\n\nreturn oldFiles.map(f => ({ json: f }));"
+      },
+      "id": "filter-old-files",
+      "name": "Filter Files > 30min",
+      "type": "n8n-nodes-base.code",
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "doneOutput": "atIndex",
+        "options": {}
+      },
+      "id": "loop-over-files",
+      "name": "Loop Over Files",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "bucket": "={{ $json.bucket }}",
+        "fileKey": "={{ $json.key }}",
+        "options": {}
+      },
+      "id": "delete-file",
+      "name": "Delete File",
+      "type": "awsS3",
+      "position": [960, 300],
+      "credentials": "minio"
+    },
+    {
+      "parameters": {
+        "to": "={{ $json.body.adminEmail || 'admin@brandflow.ge' }}",
+        "subject": "BrandFlow Cleanup Report",
+        "body": "={{ $json.body.deletedCount + ' files deleted. Total freed: ' + $json.body.freedSpace + ' bytes' }}",
+        "options": {}
+      },
+      "id": "email-report",
+      "name": "Send Report",
+      "type": "n8n-nodes-base.emailSend",
+      "position": [1200, 300]
+    }
+  ],
+  "connections": {
+    "Every Hour": {
+      "main": [
+        [
+          {
+            "node": "List Temp Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Temp Files": {
+      "main": [
+        [
+          {
+            "node": "Filter Files > 30min",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Files > 30min": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Files": {
+      "main": [
+        [
+          {
+            "node": "Delete File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["maintenance", "storage", "cleanup"],
+  "meta": {
+    "templateCredsSetup": false,
+    "templateId": "cleanup"
+  }
+}

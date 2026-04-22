@@ -1,0 +1,199 @@
+{
+  "name": "BrandFlow - Render Notify",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "brandflow-render-complete",
+        "method": "POST",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "webhookId": "brandflow-render-complete"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body;\n\nreturn [{\n  json: {\n    renderId: body.renderId,\n    userId: body.userId,\n    fileName: body.fileName,\n    duration: body.duration || 0,\n    minioBucket: body.minioBucket || 'brandflow-renders',\n    minioFilePath: body.minioFilePath || 'renders/' + body.renderId + '.mp4',\n    userDriveToken: body.userDriveToken,\n    driveFolderId: body.driveFolderId || null,\n    apiCallbackUrl: body.apiCallbackUrl || null,\n    notificationEmail: body.notificationEmail || null\n  }\n}];"
+      },
+      "id": "parse-data",
+      "name": "Parse Data",
+      "type": "n8n-nodes-base.code",
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "bucket": "={{ $json.minioBucket }}",
+        "fileKey": "={{ $json.minioFilePath }}",
+        "options": {}
+      },
+      "id": "download-render",
+      "name": "Download from MinIO",
+      "type": "awsS3",
+      "position": [480, 300],
+      "credentials": "minio"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $json.userDriveToken }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyContentType": "multipart-data",
+        "options": {}
+      },
+      "id": "upload-drive",
+      "name": "Upload to Drive",
+      "type": "httpRequest",
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "bucket": "={{ $json.minioBucket }}",
+        "fileKey": "={{ $json.minioFilePath }}",
+        "options": {}
+      },
+      "id": "cleanup-minio",
+      "name": "Delete from MinIO",
+      "type": "awsS3",
+      "position": [960, 300],
+      "credentials": "minio"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $json;\nconst notificationEmail = data.notificationEmail || 'user-' + data.userId + '@brandflow.ge';\nconst fileName = data.fileName || 'render.mp4';\n\nreturn [{\n  json: {\n    email: notificationEmail,\n    fileName: fileName,\n    duration: data.duration,\n    userId: data.userId,\n    renderId: data.renderId\n  }\n}];"
+      },
+      "id": "prepare-notification",
+      "name": "Prepare Notification",
+      "type": "n8n-nodes-base.code",
+      "position": [1200, 300]
+    },
+    {
+      "parameters": {
+        "to": "={{ $json.email }}",
+        "subject": "Your video is ready!",
+        "body": "={{ 'Your video \"' + $json.fileName + '\" has been created and saved to your Google Drive.\\n\\nRender time: ' + $json.duration + ' seconds' }}",
+        "options": {}
+      },
+      "id": "send-email",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "position": [1440, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": {},
+        "respondWithSuccess": true,
+        "responseBody": {
+          "success": true,
+          "message": "Render notification processed"
+        }
+      },
+      "id": "respond-success",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [1680, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Parse Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Data": {
+      "main": [
+        [
+          {
+            "node": "Download from MinIO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download from MinIO": {
+      "main": [
+        [
+          {
+            "node": "Upload to Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Drive": {
+      "main": [
+        [
+          {
+            "node": "Delete from MinIO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete from MinIO": {
+      "main": [
+        [
+          {
+            "node": "Prepare Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Notification": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["video", "render", "notification"],
+  "meta": {
+    "templateCredsSetup": false,
+    "templateId": "render-notify"
+  }
+}

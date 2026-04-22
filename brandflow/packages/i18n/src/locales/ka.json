@@ -1,0 +1,74 @@
+{
+  "common": {
+    "appName": "BrandFlow",
+    "loading": "იტვირთება...",
+    "error": "შეცდომა",
+    "save": "შენახვა",
+    "cancel": "გაუქმება",
+    "delete": "წაშლა",
+    "edit": "რედაქტირება",
+    "create": "შექმნა",
+    "next": "შემდეგი",
+    "back": "უკან",
+    "done": "დასრულებულია",
+    "retry": "თავიდან ცდა"
+  },
+  "auth": {
+    "signIn": "შესვლა",
+    "signUp": "რეგისტრაცია",
+    "signOut": "გასვლა",
+    "signInWithGoogle": "Google-ით შესვლა",
+    "email": "ელ-ფოსტა",
+    "password": "პაროლი",
+    "forgotPassword": "დაგავიწყდა პაროლი?",
+    "noAccount": "არ გაქვს ანგარიში?",
+    "hasAccount": "უკვე გაქვს ანგარიში?"
+  },
+  "dashboard": {
+    "title": "დაფა",
+    "welcome": "გამარჯობა, {{name}}!",
+    "createContent": "კონტენტის შექმნა",
+    "myContents": "ჩემი კონტენტი",
+    "brandKit": "მარკის კომპლექტი",
+    "settings": "პარამეტრები",
+    "subscription": "გამოწერა"
+  },
+  "content": {
+    "upload": "ატვირთვა",
+    "selectPlatform": "პლატფორმის არჩევა",
+    "generateCaption": "Caption-ის გენერაცია",
+    "addToPost": "პოსტზე დამატება",
+    "publish": "გამოქვეყნება",
+    "schedule": "დაგეგმვა",
+    "download": "ჩამოტვირთვა",
+    "saveToDrive": "Drive-ში შენახვა"
+  },
+  "platform": {
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "tiktok": "TikTok",
+    "linkedin": "LinkedIn"
+  },
+  "subscription": {
+    "free": "Free",
+    "starter": "Starter",
+    "pro": "Pro",
+    "agency": "Agency",
+    "upgrade": "გაუმჯობესება",
+    "manage": "მართვა",
+    "cancel": "გაუქმება",
+    "renew": "განახლება"
+  },
+  "onboarding": {
+    "welcome": "BrandFlow-ში კეთილი იყოს თქვენი მობრძანება!",
+    "connectInstagram": "Instagram-ის დაკავშირება",
+    "aiAnalyzing": "AI ანალიზირებს...",
+    "brandProfileReady": "თქვენი მარკის პროფილი მზადაა!",
+    "firstPost": "შექმენით თქვენი პირველი პოსტი"
+  },
+  "errors": {
+    "generic": "დაფიქსირდა შეცდომა. სცადეთ თავიდან.",
+    "network": "ქსელის შეცდომა. შეამოწმეთ კავშირი.",
+    "unauthorized": "ავტორიზაცია საჭიროა"
+  }
+}

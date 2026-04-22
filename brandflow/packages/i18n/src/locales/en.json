@@ -1,0 +1,74 @@
+{
+  "common": {
+    "appName": "BrandFlow",
+    "loading": "Loading...",
+    "error": "Error",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "next": "Next",
+    "back": "Back",
+    "done": "Done",
+    "retry": "Retry"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "signInWithGoogle": "Sign in with Google",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Hello, {{name}}!",
+    "createContent": "Create Content",
+    "myContents": "My Content",
+    "brandKit": "Brand Kit",
+    "settings": "Settings",
+    "subscription": "Subscription"
+  },
+  "content": {
+    "upload": "Upload",
+    "selectPlatform": "Select Platform",
+    "generateCaption": "Generate Caption",
+    "addToPost": "Add to Post",
+    "publish": "Publish",
+    "schedule": "Schedule",
+    "download": "Download",
+    "saveToDrive": "Save to Drive"
+  },
+  "platform": {
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "tiktok": "TikTok",
+    "linkedin": "LinkedIn"
+  },
+  "subscription": {
+    "free": "Free",
+    "starter": "Starter",
+    "pro": "Pro",
+    "agency": "Agency",
+    "upgrade": "Upgrade",
+    "manage": "Manage",
+    "cancel": "Cancel",
+    "renew": "Renew"
+  },
+  "onboarding": {
+    "welcome": "Welcome to BrandFlow!",
+    "connectInstagram": "Connect Instagram",
+    "aiAnalyzing": "AI is analyzing...",
+    "brandProfileReady": "Your brand profile is ready!",
+    "firstPost": "Create your first post"
+  },
+  "errors": {
+    "generic": "An error occurred. Please try again.",
+    "network": "Network error. Check your connection.",
+    "unauthorized": "Authorization required"
+  }
+}

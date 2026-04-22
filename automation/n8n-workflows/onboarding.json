@@ -1,0 +1,145 @@
+{
+  "name": "BrandFlow - Onboarding",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "brandflow-onboarding",
+        "method": "POST",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "webhookId": "brandflow-onboarding"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body;\nconst locale = body.locale || 'ka';\nconst name = body.name || 'User';\nconst email = body.email;\n\nconst content = {\n  ka: {\n    subject: 'კეთილი იყოს თქვენი მობრძანება BrandFlow-ში',\n    greet: 'გამარჯობა',\n    p1: 'BrandFlow-ით თქვენი სოციალური მედია კონტენტი ავტომატურად შეიქმნება.',\n    p2: 'დაიწყეთ პირველი პოსტის შექმნა და დანარჩენს ჩვენ გავაკეთებთ.',\n    cta: 'დაიწყე ახლა',\n    reminder: 'თქვენ ჯერ პირველი პოსტი არ შეგიქმნიათ. დაიწყეთ ახლა!'\n  },\n  ru: {\n    subject: 'Добро пожаловать в BrandFlow',\n    greet: 'Привет',\n    p1: 'С BrandFlow ваш контент для социальных сетей создается автоматически.',\n    p2: 'Создайте свой первый пост, а остальное мы возьмём на себя.',\n    cta: 'Начать сейчас',\n    reminder: 'Вы ещё не создали свой первый пост. Начните сейчас!'\n  },\n  en: {\n    subject: 'Welcome to BrandFlow',\n    greet: 'Hello',\n    p1: 'With BrandFlow, your social media content is created automatically.',\n    p2: 'Create your first post and we will handle the rest.',\n    cta: 'Get Started',\n    reminder: 'You haven\\'t created your first post yet. Get started now!'\n  }\n};\n\nconst t = content[locale] || content.en;\n\nconst htmlBody = `\n<h1>${t.greet}, ${name}!</h1>\n<p>${t.p1}</p>\n<p>${t.p2}</p>\n<a href=\"https://brandflow.ge/${locale}/dashboard\" style=\"\n  display: inline-block;\n  background: #6366F1;\n  color: white;\n  padding: 12px 24px;\n  border-radius: 8px;\n  text-decoration: none;\n  font-weight: bold;\n\">${t.cta}</a>\n<p style=\"margin-top: 20px; color: #666; font-size: 12px;\">\nBrandFlow — Take the photo. We handle the rest.\n</p>\n`;\n\nreturn [{\n  json: {\n    email,\n    name,\n    subject: t.subject,\n    htmlBody,\n    reminderSubject: t.reminder,\n    locale,\n    userId: body.userId\n  }\n}];"
+      },
+      "id": "prepare-email",
+      "name": "Prepare Content",
+      "type": "n8n-nodes-base.code",
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "to": "={{ $json.email }}",
+        "subject": "={{ $json.subject }}",
+        "body": "={{ $json.htmlBody }}",
+        "options": {
+          "contentType": "html"
+        }
+      },
+      "id": "send-welcome",
+      "name": "Send Welcome Email",
+      "type": "n8n-nodes-base.emailSend",
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "amount": 3,
+        "unit": "days",
+        "options": {}
+      },
+      "id": "wait-3-days",
+      "name": "Wait 3 Days",
+      "type": "n8n-nodes-base.delay",
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "to": "={{ $json.email }}",
+        "subject": "={{ $json.reminderSubject }}",
+        "body": "={{ $json.locale === 'ka' ? 'თქვენ ჯერ პირველი პოსტი არ შეგიქმნიათ. დაიწყეთ ახლა!' : $json.locale === 'ru' ? 'Вы ещё не создали свой первый пост. Начните сейчас!' : 'You haven\\'t created your first post yet. Get started now!' }}",
+        "options": {}
+      },
+      "id": "send-reminder",
+      "name": "Send Reminder",
+      "type": "n8n-nodes-base.emailSend",
+      "position": [960, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": {},
+        "respondWithSuccess": true,
+        "responseBody": {
+          "success": true,
+          "message": "Onboarding completed"
+        }
+      },
+      "id": "respond-success",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [1200, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Prepare Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Content": {
+      "main": [
+        [
+          {
+            "node": "Send Welcome Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Welcome Email": {
+      "main": [
+        [
+          {
+            "node": "Wait 3 Days",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 3 Days": {
+      "main": [
+        [
+          {
+            "node": "Send Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Reminder": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["onboarding", "email", "automation"],
+  "meta": {
+    "templateCredsSetup": false,
+    "templateId": "onboarding"
+  }
+}

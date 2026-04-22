@@ -1,0 +1,97 @@
+{
+  "name": "BrandFlow - AI Process",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "brandflow-ai-process",
+        "method": "POST",
+        "responseMode": "responseNode"
+      },
+      "id": "trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body;\n\nreturn [{\n  json: {\n    contentId: body.contentId,\n    userId: body.userId,\n    operation: body.operation || 'full',\n    platform: body.platform || 'instagram_feed',\n    options: body.options || {}\n  }\n}];"
+      },
+      "id": "parse-input",
+      "name": "Parse Input",
+      "type": "n8n-nodes-base.code",
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.BACKEND_API_URL }}/api/contents/{{ $json.contentId }}",
+        "options": {}
+      },
+      "id": "get-content",
+      "name": "Get Content Info",
+      "type": "httpRequest",
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.CARVEKIT_URL }}/remove-background",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"image_url\": \"{{ $json.original_url }}\"\n}",
+        "options": {}
+      },
+      "id": "bg-remove",
+      "name": "Background Remove",
+      "type": "httpRequest",
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BACKEND_API_URL }}/api/contents/{{ $json.contentId }}/process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"step\": \"bg_removed\",\n  \"processed_url\": \"{{ $json.processed_url }}\"\n}",
+        "options": {}
+      },
+      "id": "update-content",
+      "name": "Update Content",
+      "type": "httpRequest",
+      "position": [960, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": {},
+        "respondWithSuccess": true,
+        "responseBody": {
+          "success": true,
+          "message": "AI process started",
+          "contentId": "{{ $json.contentId }}"
+        }
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [1200, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [[{"node": "Parse Input", "type": "main", "index": 0}]]
+    },
+    "Parse Input": {
+      "main": [[{"node": "Get Content Info", "type": "main", "index": 0}]]
+    },
+    "Get Content Info": {
+      "main": [[{"node": "Background Remove", "type": "main", "index": 0}]]
+    },
+    "Background Remove": {
+      "main": [[{"node": "Update Content", "type": "main", "index": 0}]]
+    },
+    "Update Content": {
+      "main": [[{"node": "Respond", "type": "main", "index": 0}]]
+    }
+  }
+}

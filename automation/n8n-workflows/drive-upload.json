@@ -1,0 +1,161 @@
+{
+  "name": "BrandFlow - Drive Upload",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "brandflow-drive-upload",
+        "method": "POST",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "webhookId": "brandflow-drive-upload"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "bucket": "={{ $json.body.minioBucket }}",
+        "fileKey": "={{ $json.body.minioFilePath }}",
+        "options": {}
+      },
+      "id": "minio-download",
+      "name": "Download from MinIO",
+      "type": "awsS3",
+      "position": [220, 300],
+      "credentials": "minio"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $json.body.userDriveToken }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyContentType": "multipart-data",
+        "options": {}
+      },
+      "id": "google-drive-upload",
+      "name": "Upload to Google Drive",
+      "type": "httpRequest",
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "bucket": "={{ $json.body.minioBucket }}",
+        "fileKey": "={{ $json.body.minioFilePath }}",
+        "options": {}
+      },
+      "id": "minio-delete",
+      "name": "Delete from MinIO",
+      "type": "awsS3",
+      "position": [660, 300],
+      "credentials": "minio"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.body.apiCallbackUrl }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"status\": \"uploaded\",\n  \"userId\": \"{{ $json.body.userId }}\",\n  \"fileName\": \"{{ $json.body.fileName }}\",\n  \"minioFilePath\": \"{{ $json.body.minioFilePath }}\"\n}",
+        "options": {}
+      },
+      "id": "notify-backend",
+      "name": "Notify Backend",
+      "type": "httpRequest",
+      "position": [880, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": {},
+        "respondWithSuccess": true,
+        "responseBody": {
+          "success": true,
+          "message": "File uploaded to Google Drive successfully"
+        }
+      },
+      "id": "respond-success",
+      "name": "Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [1100, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Download from MinIO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download from MinIO": {
+      "main": [
+        [
+          {
+            "node": "Upload to Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Delete from MinIO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete from MinIO": {
+      "main": [
+        [
+          {
+            "node": "Notify Backend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Backend": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["storage", "google-drive", "minio"],
+  "meta": {
+    "templateCredsSetup": false,
+    "templateId": "drive-upload"
+  }
+}

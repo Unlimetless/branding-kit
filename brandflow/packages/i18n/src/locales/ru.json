@@ -1,0 +1,74 @@
+{
+  "common": {
+    "appName": "BrandFlow",
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "create": "Создать",
+    "next": "Далее",
+    "back": "Назад",
+    "done": "Готово",
+    "retry": "Повторить"
+  },
+  "auth": {
+    "signIn": "Вход",
+    "signUp": "Регистрация",
+    "signOut": "Выйти",
+    "signInWithGoogle": "Войти через Google",
+    "email": "Электронная почта",
+    "password": "Пароль",
+    "forgotPassword": "Забыли пароль?",
+    "noAccount": "Нет аккаунта?",
+    "hasAccount": "Уже есть аккаунт?"
+  },
+  "dashboard": {
+    "title": "Панель",
+    "welcome": "Привет, {{name}}!",
+    "createContent": "Создать контент",
+    "myContents": "Мой контент",
+    "brandKit": "Набор бренда",
+    "settings": "Настройки",
+    "subscription": "Подписка"
+  },
+  "content": {
+    "upload": "Загрузить",
+    "selectPlatform": "Выберите платформу",
+    "generateCaption": "Создать подпись",
+    "addToPost": "Добавить в пост",
+    "publish": "Опубликовать",
+    "schedule": "Запланировать",
+    "download": "Скачать",
+    "saveToDrive": "Сохранить в Drive"
+  },
+  "platform": {
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "tiktok": "TikTok",
+    "linkedin": "LinkedIn"
+  },
+  "subscription": {
+    "free": "Free",
+    "starter": "Starter",
+    "pro": "Pro",
+    "agency": "Agency",
+    "upgrade": "Улучшить",
+    "manage": "Управление",
+    "cancel": "Отменить",
+    "renew": "Обновить"
+  },
+  "onboarding": {
+    "welcome": "Добро пожаловать в BrandFlow!",
+    "connectInstagram": "Подключить Instagram",
+    "aiAnalyzing": "AI анализирует...",
+    "brandProfileReady": "Профиль вашего бренда готов!",
+    "firstPost": "Создайте свой первый пост"
+  },
+  "errors": {
+    "generic": "Произошла ошибка. Попробуйте снова.",
+    "network": "Ошибка сети. Проверьте подключение.",
+    "unauthorized": "Требуется авторизация"
+  }
+}

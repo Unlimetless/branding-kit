@@ -1,0 +1,77 @@
+# ===========================================
+# BrandFlow .gitignore
+# ===========================================
+
+# ----- Dependencies -----
+node_modules/
+.pnpm-store/
+.yarn/
+
+# ----- Build Outputs -----
+.next/
+out/
+dist/
+build/
+.turbo/
+
+# ----- Environment Variables -----
+.env
+.env.local
+.env.*.local
+.env.production
+*.pem
+
+# ----- IDE -----
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# ----- OS -----
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ----- Debug -----
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# ----- Testing -----
+coverage/
+.nyc_output/
+
+# ----- Logs -----
+*.log
+logs/
+
+# ----- Misc -----
+*.bak
+*.tmp
+*.temp
+.vercel
+.turbo-run/
+
+# ----- Mobile (React Native) -----
+.metro-health-check-*
+.expo/
+
+# ----- Rust/Tauri -----
+src-tauri/target/
+Cargo.lock
+
+# ----- Monorepo specific -----
+.turbo/
+dist/
+build/
+
+# ----- Secrets (if committed by mistake) -----
+*.secret
+*.private
+credentials.json
+service-account-key.json

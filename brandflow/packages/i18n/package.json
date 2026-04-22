@@ -1,0 +1,15 @@
+{
+  "name": "@brandflow/i18n",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "next-intl": "^3.0.0",
+    "i18next": "^23.0.0",
+    "react-i18next": "^14.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}

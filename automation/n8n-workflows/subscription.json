@@ -1,0 +1,129 @@
+{
+  "name": "BrandFlow - Subscription (BOG)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "brandflow-subscription",
+        "method": "POST",
+        "responseMode": "responseNode"
+      },
+      "id": "webhook-trigger",
+      "name": "BOG Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body;\nconst status = body.status;\nconst bogOrderId = body.order_id;\nconst amount = body.amount;\nconst currency = body.currency || 'GEL';\nconst failureReason = body.failure_reason;\n\nlet action = 'unknown';\n\nswitch(status) {\n  case 'completed':\n    action = 'activate';\n    break;\n  case 'failed':\n    action = 'failed';\n    break;\n  case 'expired':\n    action = 'expired';\n    break;\n  case 'pending':\n    action = 'pending';\n    break;\n  default:\n    action = 'unknown';\n}\n\nreturn [{\n  json: {\n    orderId: bogOrderId,\n    action,\n    status,\n    amount,\n    currency,\n    failureReason,\n    timestamp: body.timestamp || new Date().toISOString()\n  }\n}];"
+      },
+      "id": "parse-bog-callback",
+      "name": "Parse BOG Callback",
+      "type": "n8n-nodes-base.code",
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $json;\n\nif (data.action === 'activate') {\n  return [{\n    json: {\n      status: 'completed',\n      completed_at: new Date().toISOString(),\n      failure_reason: null\n    }\n  }];\n} else if (data.action === 'failed') {\n  return [{\n    json: {\n      status: 'failed',\n      failure_reason: data.failureReason || 'Payment failed'\n    }\n  }];\n} else if (data.action === 'expired') {\n  return [{\n    json: {\n      status: 'expired',\n      failure_reason: 'Order expired'\n    }\n  }];\n}\n\nreturn [];"
+      },
+      "id": "determine-update",
+      "name": "Determine Update",
+      "type": "n8n-nodes-base.code",
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BACKEND_API_URL }}/api/subscriptions/update-by-order",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"order_id\": \"{{ $json.orderId }}\",\n  \"status\": \"{{ $json.status }}\",\n  \"amount\": {{ $json.amount }},\n  \"currency\": \"{{ $json.currency }}\",\n  \"failure_reason\": \"{{ $json.failureReason }}\",\n  \"completed_at\": \"{{ $json.completed_at }}\"\n}",
+        "options": {}
+      },
+      "id": "update-backend",
+      "name": "Update Backend",
+      "type": "httpRequest",
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "to": "={{ $json.email }}",
+        "subject": "={{ $json.action === 'activate' ? 'Subscription Activated!' : $json.action === 'failed' ? 'Payment Failed' : 'Payment Update' }}",
+        "body": "={{ $json.action === 'activate' ? 'Your BrandFlow Pro subscription is now active. Enjoy unlimited content creation!' : $json.action === 'failed' ? 'Your payment failed. Please try again: https://brandflow.ge/subscription' : 'Your payment status has been updated.' }}",
+        "options": {}
+      },
+      "id": "send-email",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "position": [960, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const action = $json.action;\nif (action === 'failed' || action === 'expired') {\n  return [{\n    json: {\n      sendRecovery: true,\n      delayHours: 72\n    }\n  }];\n}\nreturn [];"
+      },
+      "id": "check-recovery",
+      "name": "Check Recovery",
+      "type": "n8n-nodes-base.code",
+      "position": [1200, 300]
+    },
+    {
+      "parameters": {
+        "amount": 3,
+        "unit": "days",
+        "options": {}
+      },
+      "id": "wait-3-days",
+      "name": "Wait 3 Days",
+      "type": "n8n-nodes-base.delay",
+      "position": [1440, 300]
+    },
+    {
+      "parameters": {
+        "to": "={{ $json.email }}",
+        "subject": "We miss you!",
+        "body": "Your payment issue hasn't been resolved. Reactivate with 20% off: COMEBACK20\n\nhttps://brandflow.ge/subscription",
+        "options": {}
+      },
+      "id": "recovery-email",
+      "name": "Recovery Email",
+      "type": "n8n-nodes-base.emailSend",
+      "position": [1680, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": {},
+        "respondWithSuccess": true,
+        "responseBody": {
+          "received": true
+        }
+      },
+      "id": "respond-bog",
+      "name": "Respond to BOG",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [1920, 300]
+    }
+  ],
+  "connections": {
+    "BOG Webhook": {
+      "main": [[{"node": "Parse BOG Callback", "type": "main", "index": 0}]]
+    },
+    "Parse BOG Callback": {
+      "main": [[{"node": "Determine Update", "type": "main", "index": 0}]]
+    },
+    "Determine Update": {
+      "main": [[{"node": "Update Backend", "type": "main", "index": 0}]]
+    },
+    "Update Backend": {
+      "main": [[{"node": "Send Email", "type": "main", "index": 0}]]
+    },
+    "Send Email": {
+      "main": [[{"node": "Check Recovery", "type": "main", "index": 0}]]
+    },
+    "Check Recovery": {
+      "main": [[{"node": "Wait 3 Days", "type": "main", "index": 0}]]
+    },
+    "Wait 3 Days": {
+      "main": [[{"node": "Recovery Email", "type": "main", "index": 0}]]
+    }
+  }
+}
