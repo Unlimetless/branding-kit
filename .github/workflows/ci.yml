@@ -37,13 +37,13 @@ jobs:
             pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile || pnpm install
+        run: cd brandflow && pnpm install --frozen-lockfile || pnpm install
         continue-on-error: true
 
       - name: Type check
-        run: pnpm run typecheck 2>&1 || true
+        run: cd brandflow && pnpm run typecheck 2>&1 || true
         continue-on-error: true
 
       - name: Build
-        run: pnpm run build 2>&1 || true
+        run: cd brandflow && pnpm run build 2>&1 || true
         continue-on-error: true
