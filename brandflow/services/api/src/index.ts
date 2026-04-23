@@ -1,12 +1,22 @@
-// BrandFlow API Server
-// Fastify + TypeScript
-
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import jwt from '@fastify/jwt'
 
+import { authRoutes } from './routes/auth'
+import { contentRoutes } from './routes/content'
+import { subscriptionRoutes } from './routes/subscriptions'
+
 const fastify = Fastify({
-  logger: true,
+  logger: {
+    level: 'info',
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        translateTime: 'HH:MM:ss Z',
+        ignore: 'pid,hostname',
+      },
+    },
+  },
 })
 
 await fastify.register(cors, {
@@ -15,41 +25,46 @@ await fastify.register(cors, {
 })
 
 await fastify.register(jwt, {
-  secret: process.env.JWT_SECRET || 'development-secret',
+  secret: process.env.JWT_SECRET || 'development-secret-change-in-production',
 })
 
-// Health check
-fastify.get('/health', async () => {
-  return { status: 'ok', timestamp: new Date().toISOString() }
-})
+await fastify.register(authRoutes, { prefix: '/auth' })
+await fastify.register(contentRoutes, { prefix: '/contents' })
+await fastify.register(subscriptionRoutes, { prefix: '/subscriptions' })
 
-// Auth routes
-fastify.post('/auth/google', async (request, reply) => {
-  // TODO: Implement Google OAuth
-  return { url: 'https://accounts.google.com/o/oauth2/auth/...' }
-})
+fastify.get('/health', async () => ({
+  status: 'ok',
+  timestamp: new Date().toISOString(),
+  version: '1.0.0',
+}))
 
-// Content routes
-fastify.post('/contents', async (request, reply) => {
-  // TODO: Implement content creation
-  return { id: 'cnt_xxx', status: 'created' }
-})
-
-// Subscription routes (BOG)
-fastify.post('/subscriptions/create-order', async (request, reply) => {
-  // TODO: Implement BOG payment order
-  return { order_id: 'BF_xxx', payment_redirect_url: 'https://bog.ge/...' }
-})
-
-fastify.post('/subscriptions/webhook', async (request, reply) => {
-  // TODO: Implement BOG webhook
-  return { received: true }
-})
+fastify.get('/', async () => ({
+  name: 'BrandFlow API',
+  version: '1.0.0',
+  endpoints: [
+    'GET /health',
+    'POST /auth/google',
+    'GET /auth/google/callback',
+    'POST /auth/logout',
+    'GET /auth/me',
+    'POST /contents',
+    'GET /contents',
+    'GET /contents/:id',
+    'POST /contents/upload',
+    'POST /contents/:id/process',
+    'GET /contents/:id/status',
+    'POST /subscriptions/create-order',
+    'GET /subscriptions/plans',
+    'POST /subscriptions/webhook',
+    'GET /subscriptions/current',
+  ],
+}))
 
 const start = async () => {
   try {
-    await fastify.listen({ port: Number(process.env.API_PORT) || 3000 })
-    console.log(`Server running at http://localhost:3000`)
+    const port = Number(process.env.API_PORT) || 3000
+    await fastify.listen({ port, host: '0.0.0.0' })
+    console.log(`BrandFlow API running at http://localhost:${port}`)
   } catch (err) {
     fastify.log.error(err)
     process.exit(1)
