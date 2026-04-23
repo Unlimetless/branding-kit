@@ -32,7 +32,12 @@
       "name": "List Temp Files",
       "type": "awsS3",
       "position": [240, 300],
-      "credentials": "minio"
+      "credentials": {
+        "minio": {
+          "id": "1",
+          "name": "MinIO Credentials"
+        }
+      }
     },
     {
       "parameters": {
@@ -65,7 +70,12 @@
       "name": "Delete File",
       "type": "awsS3",
       "position": [960, 300],
-      "credentials": "minio"
+      "credentials": {
+        "minio": {
+          "id": "1",
+          "name": "MinIO Credentials"
+        }
+      }
     },
     {
       "parameters": {

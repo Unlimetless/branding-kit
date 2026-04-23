@@ -25,7 +25,12 @@
       "name": "Download from MinIO",
       "type": "awsS3",
       "position": [220, 300],
-      "credentials": "minio"
+      "credentials": {
+        "minio": {
+          "id": "1",
+          "name": "MinIO Credentials"
+        }
+      }
     },
     {
       "parameters": {
@@ -60,7 +65,12 @@
       "name": "Delete from MinIO",
       "type": "awsS3",
       "position": [660, 300],
-      "credentials": "minio"
+      "credentials": {
+        "minio": {
+          "id": "1",
+          "name": "MinIO Credentials"
+        }
+      }
     },
     {
       "parameters": {

@@ -35,7 +35,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.BACKEND_API_URL }}/api/subscriptions/update-by-order",
+        "url": "={{ $vars.BACKEND_API_URL }}/api/subscriptions/update-by-order",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"order_id\": \"{{ $json.orderId }}\",\n  \"status\": \"{{ $json.status }}\",\n  \"amount\": {{ $json.amount }},\n  \"currency\": \"{{ $json.currency }}\",\n  \"failure_reason\": \"{{ $json.failureReason }}\",\n  \"completed_at\": \"{{ $json.completed_at }}\"\n}",
