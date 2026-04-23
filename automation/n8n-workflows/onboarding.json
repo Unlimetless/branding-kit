@@ -5,15 +5,13 @@
       "parameters": {
         "path": "brandflow-onboarding",
         "method": "POST",
-        "responseMode": "responseNode",
-        "options": {}
+        "responseMode": "responseNode"
       },
       "id": "webhook-trigger",
       "name": "Webhook Trigger",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [0, 300],
-      "webhookId": "brandflow-onboarding"
+      "position": [0, 300]
     },
     {
       "parameters": {

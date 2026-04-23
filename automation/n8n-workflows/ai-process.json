@@ -11,8 +11,7 @@
       "name": "Webhook Trigger",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [0, 300],
-      "webhookId": "brandflow-ai-process"
+      "position": [0, 300]
     },
     {
       "parameters": {
@@ -26,7 +25,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.CARVEKIT_URL }}/remove-background",
+        "url": "={{ $vars.CARVEKIT_URL }}/remove-background",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"image_url\": \"{{ $json.originalUrl }}\"\n}",
@@ -40,7 +39,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.BACKEND_API_URL }}/api/contents/{{ $json.contentId }}/process",
+        "url": "={{ $vars.BACKEND_API_URL }}/api/contents/{{ $json.contentId }}/process",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"step\": \"bg_removed\",\n  \"processed_url\": \"{{ $json.processed_url }}\"\n}",
@@ -69,16 +68,57 @@
   ],
   "connections": {
     "Webhook Trigger": {
-      "main": [[{"node": "Parse Input", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Parse Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Parse Input": {
-      "main": [[{"node": "Background Remove", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Background Remove",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Background Remove": {
-      "main": [[{"node": "Update Content", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Update Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Update Content": {
-      "main": [[{"node": "Respond", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["ai", "process", "background-removal"],
+  "meta": {
+    "templateCredsSetup": false,
+    "templateId": "ai-process"
   }
 }

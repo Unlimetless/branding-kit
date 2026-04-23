@@ -11,8 +11,7 @@
       "name": "Webhook Trigger",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [0, 300],
-      "webhookId": "brandflow-ai-caption"
+      "position": [0, 300]
     },
     {
       "parameters": {
@@ -26,7 +25,7 @@
     {
       "parameters": {
         "method": "GET",
-        "url": "={{ $env.BACKEND_API_URL }}/api/ai-cache/{{ $json.cacheKey }}",
+        "url": "={{ $vars.BACKEND_API_URL }}/api/ai-cache/{{ $json.cacheKey }}",
         "options": {}
       },
       "id": "check-cache",
@@ -37,7 +36,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.GEMINI_API_URL }}/generate",
+        "url": "={{ $vars.GEMINI_API_URL }}/generate",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"prompt\": \"Generate a social media caption for a {{ $json.sector }} business. Tone: {{ $json.brandTone }}. Language: {{ $json.locale }}. Respond in JSON format: {\\\"caption\\\": \\\"...\\\", \\\"hashtags\\\": [\\\"#tag1\\\", \\\"#tag2\\\"]}\",\n  \"image_url\": \"{{ $json.imageUrl }}\",\n  \"locale\": \"{{ $json.locale }}\"\n}",
@@ -51,7 +50,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.BACKEND_API_URL }}/api/ai-cache/store",
+        "url": "={{ $vars.BACKEND_API_URL }}/api/ai-cache/store",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"cache_key\": \"{{ $json.cacheKey }}\",\n  \"user_id\": \"{{ $json.userId }}\",\n  \"result\": {{ $json.geminiResult }},\n  \"model\": \"gemini-flash\",\n  \"locale\": \"{{ $json.locale }}\"\n}",
@@ -65,7 +64,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.BACKEND_API_URL }}/api/contents/{{ $json.contentId }}/caption",
+        "url": "={{ $vars.BACKEND_API_URL }}/api/contents/{{ $json.contentId }}/caption",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"caption\": \"{{ $json.caption }}\",\n  \"hashtags\": {{ $json.hashtags }},\n  \"locale\": \"{{ $json.locale }}\"\n}",
@@ -95,22 +94,79 @@
   ],
   "connections": {
     "Webhook Trigger": {
-      "main": [[{"node": "Parse Input", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Parse Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Parse Input": {
-      "main": [[{"node": "Check Cache", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Check Cache",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Check Cache": {
-      "main": [[{"node": "Generate Caption", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Generate Caption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Generate Caption": {
-      "main": [[{"node": "Store Cache", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Store Cache",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Store Cache": {
-      "main": [[{"node": "Update Content", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Update Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Update Content": {
-      "main": [[{"node": "Respond", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["ai", "caption", "gemini"],
+  "meta": {
+    "templateCredsSetup": false,
+    "templateId": "ai-caption"
   }
 }

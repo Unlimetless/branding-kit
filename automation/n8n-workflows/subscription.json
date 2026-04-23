@@ -125,5 +125,14 @@
     "Wait 3 Days": {
       "main": [[{"node": "Recovery Email", "type": "main", "index": 0}]]
     }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["payment", "subscription", "bog"],
+  "meta": {
+    "templateCredsSetup": false,
+    "templateId": "subscription"
   }
 }
