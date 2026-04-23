@@ -20,13 +20,11 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Create lock file for npm
-        run: |
-          touch package-lock.json
-          echo '{"lockfileVersion": 3}' > package-lock.json
+      - name: Setup pnpm
+        run: npm_config_ignore_workspaces=true npx -y pnpm@latest setup
 
-      - name: Install pnpm
-        run: npm install -g pnpm
+      - name: Add pnpm to PATH
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Install dependencies
         run: pnpm install --ignore-workspace
