@@ -26,11 +26,12 @@
     },
     {
       "parameters": {
-        "method": "POST",
         "url": "={{ $vars.CARVEKIT_URL }}/remove-background",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"image_url\": \"{{ $json.originalUrl }}\"\n}"
+        "requestMethod": "POST",
+        "responseFormat": "json",
+        "jsonParameters": true,
+        "bodyParametersJson": "={\n  \"image_url\": \"{{ $json.originalUrl }}\"\n}",
+        "options": {}
       },
       "id": "bg-remove",
       "name": "Background Remove",
@@ -39,11 +40,12 @@
     },
     {
       "parameters": {
-        "method": "POST",
         "url": "={{ $vars.BACKEND_API_URL }}/api/contents/{{ $json.contentId }}/process",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"step\": \"bg_removed\",\n  \"processed_url\": \"{{ $json.processed_url }}\"\n}"
+        "requestMethod": "POST",
+        "responseFormat": "json",
+        "jsonParameters": true,
+        "bodyParametersJson": "={\n  \"step\": \"bg_removed\",\n  \"processed_url\": \"{{ $json.processed_url }}\"\n}",
+        "options": {}
       },
       "id": "update-content",
       "name": "Update Content",

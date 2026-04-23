@@ -26,8 +26,10 @@
     },
     {
       "parameters": {
-        "method": "GET",
-        "url": "={{ $vars.BACKEND_API_URL }}/api/ai-cache/{{ $json.cacheKey }}"
+        "url": "={{ $vars.BACKEND_API_URL }}/api/ai-cache/{{ $json.cacheKey }}",
+        "requestMethod": "GET",
+        "responseFormat": "json",
+        "options": {}
       },
       "id": "uuid-check-cache",
       "name": "Check Cache",
@@ -36,11 +38,12 @@
     },
     {
       "parameters": {
-        "method": "POST",
         "url": "={{ $vars.GEMINI_API_URL }}/generate",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"prompt\": \"Generate a social media caption for a {{ $json.sector }} business. Tone: {{ $json.brandTone }}. Language: {{ $json.locale }}.\",\n  \"image_url\": \"{{ $json.imageUrl }}\",\n  \"locale\": \"{{ $json.locale }}\"\n}"
+        "requestMethod": "POST",
+        "responseFormat": "json",
+        "jsonParameters": true,
+        "bodyParametersJson": "={\n  \"prompt\": \"Generate a social media caption for a {{ $json.sector }} business. Tone: {{ $json.brandTone }}. Language: {{ $json.locale }}.\",\n  \"image_url\": \"{{ $json.imageUrl }}\",\n  \"locale\": \"{{ $json.locale }}\"\n}",
+        "options": {}
       },
       "id": "uuid-gemini-caption",
       "name": "Generate Caption",
@@ -49,11 +52,12 @@
     },
     {
       "parameters": {
-        "method": "POST",
         "url": "={{ $vars.BACKEND_API_URL }}/api/ai-cache/store",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"cache_key\": \"{{ $json.cacheKey }}\",\n  \"user_id\": \"{{ $json.userId }}\",\n  \"result\": {{ $json.geminiResult }},\n  \"model\": \"gemini-flash\",\n  \"locale\": \"{{ $json.locale }}\"\n}"
+        "requestMethod": "POST",
+        "responseFormat": "json",
+        "jsonParameters": true,
+        "bodyParametersJson": "={\n  \"cache_key\": \"{{ $json.cacheKey }}\",\n  \"user_id\": \"{{ $json.userId }}\",\n  \"result\": {{ $json.geminiResult }},\n  \"model\": \"gemini-flash\",\n  \"locale\": \"{{ $json.locale }}\"\n}",
+        "options": {}
       },
       "id": "uuid-store-cache",
       "name": "Store Cache",
@@ -62,11 +66,12 @@
     },
     {
       "parameters": {
-        "method": "POST",
         "url": "={{ $vars.BACKEND_API_URL }}/api/contents/{{ $json.contentId }}/caption",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"caption\": \"{{ $json.caption }}\",\n  \"hashtags\": {{ $json.hashtags }},\n  \"locale\": \"{{ $json.locale }}\"\n}"
+        "requestMethod": "POST",
+        "responseFormat": "json",
+        "jsonParameters": true,
+        "bodyParametersJson": "={\n  \"caption\": \"{{ $json.caption }}\",\n  \"hashtags\": {{ $json.hashtags }},\n  \"locale\": \"{{ $json.locale }}\"\n}",
+        "options": {}
       },
       "id": "uuid-update-content",
       "name": "Update Content",

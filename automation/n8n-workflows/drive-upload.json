@@ -33,19 +33,14 @@
     },
     {
       "parameters": {
-        "method": "POST",
         "url": "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
+        "requestMethod": "POST",
+        "responseFormat": "json",
         "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "Bearer {{ $json.body.userDriveToken }}"
-            }
-          ]
-        },
+        "headerParametersJson": "={\n  \"Authorization\": \"Bearer {{ $json.body.userDriveToken }}\"\n}",
         "sendBody": true,
-        "bodyContentType": "multipart-data"
+        "bodyContentType": "multipart-form-data",
+        "options": {}
       },
       "id": "google-drive-upload",
       "name": "Upload to Google Drive",
@@ -71,11 +66,12 @@
     },
     {
       "parameters": {
-        "method": "POST",
         "url": "={{ $json.body.apiCallbackUrl }}",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"status\": \"uploaded\",\n  \"userId\": \"{{ $json.body.userId }}\",\n  \"fileName\": \"{{ $json.body.fileName }}\",\n  \"minioFilePath\": \"{{ $json.body.minioFilePath }}\"\n}"
+        "requestMethod": "POST",
+        "responseFormat": "json",
+        "jsonParameters": true,
+        "bodyParametersJson": "={\n  \"status\": \"uploaded\",\n  \"userId\": \"{{ $json.body.userId }}\",\n  \"fileName\": \"{{ $json.body.fileName }}\",\n  \"minioFilePath\": \"{{ $json.body.minioFilePath }}\"\n}",
+        "options": {}
       },
       "id": "notify-backend",
       "name": "Notify Backend",

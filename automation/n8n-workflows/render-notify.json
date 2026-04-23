@@ -43,19 +43,14 @@
     },
     {
       "parameters": {
-        "method": "POST",
         "url": "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
+        "requestMethod": "POST",
+        "responseFormat": "json",
         "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "Bearer {{ $json.userDriveToken }}"
-            }
-          ]
-        },
+        "headerParametersJson": "={\n  \"Authorization\": \"Bearer {{ $json.userDriveToken }}\"\n}",
         "sendBody": true,
-        "bodyContentType": "multipart-data"
+        "bodyContentType": "multipart-form-data",
+        "options": {}
       },
       "id": "upload-drive",
       "name": "Upload to Drive",
