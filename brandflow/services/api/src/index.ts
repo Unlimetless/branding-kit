@@ -5,6 +5,7 @@ import jwt from '@fastify/jwt'
 import { authRoutes } from './routes/auth'
 import { contentRoutes } from './routes/content'
 import { subscriptionRoutes } from './routes/subscriptions'
+import { aiCacheRoutes } from './routes/ai-cache'
 
 const fastify = Fastify({
   logger: {
@@ -31,6 +32,7 @@ await fastify.register(jwt, {
 await fastify.register(authRoutes, { prefix: '/auth' })
 await fastify.register(contentRoutes, { prefix: '/contents' })
 await fastify.register(subscriptionRoutes, { prefix: '/subscriptions' })
+await fastify.register(aiCacheRoutes, { prefix: '/ai-cache' })
 
 fastify.get('/health', async () => ({
   status: 'ok',
