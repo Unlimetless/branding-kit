@@ -22,20 +22,17 @@ jobs:
 
       - name: Create lock file for npm
         run: |
-          touch brandflow/package-lock.json
-          echo '{"lockfileVersion": 3}' > brandflow/package-lock.json
+          touch package-lock.json
+          echo '{"lockfileVersion": 3}' > package-lock.json
 
       - name: Install pnpm
         run: npm install -g pnpm
 
       - name: Install dependencies
-        working-directory: ./brandflow
         run: pnpm install --ignore-workspace
 
       - name: Type check
-        working-directory: ./brandflow
         run: pnpm run typecheck || true
 
       - name: Build
-        working-directory: ./brandflow
         run: pnpm run build || true
