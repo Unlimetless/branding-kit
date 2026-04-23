@@ -106,7 +106,7 @@
       },
       "id": "respond-success",
       "name": "Respond to Webhook",
-      "type": "n8n-nodes-base.respondtowebhook",
+      "type": "n8n-nodes-base.respondToWebhook",
       "position": [1680, 300]
     }
   ],
