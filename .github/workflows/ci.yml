@@ -9,8 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v4
@@ -20,17 +19,26 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Setup pnpm
-        run: npm_config_ignore_workspaces=true npx -y pnpm@latest setup
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@9 --activate
 
-      - name: Add pnpm to PATH
-        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install --ignore-workspace
+        run: pnpm install --frozen-lockfile || pnpm install
 
       - name: Type check
-        run: pnpm run typecheck || true
+        run: pnpm run typecheck 2>&1 || true
 
       - name: Build
-        run: pnpm run build || true
+        run: pnpm run build 2>&1 || true
