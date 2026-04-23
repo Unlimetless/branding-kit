@@ -21,6 +21,7 @@
       "id": "parse-input",
       "name": "Parse Input",
       "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [240, 300]
     },
     {
@@ -29,12 +30,11 @@
         "url": "={{ $vars.CARVEKIT_URL }}/remove-background",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"image_url\": \"{{ $json.originalUrl }}\"\n}",
-        "options": {}
+        "jsonBody": "={\n  \"image_url\": \"{{ $json.originalUrl }}\"\n}"
       },
       "id": "bg-remove",
       "name": "Background Remove",
-      "type": "httpRequest",
+      "type": "n8n-nodes-base.httprequest",
       "position": [480, 300]
     },
     {
@@ -43,12 +43,11 @@
         "url": "={{ $vars.BACKEND_API_URL }}/api/contents/{{ $json.contentId }}/process",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"step\": \"bg_removed\",\n  \"processed_url\": \"{{ $json.processed_url }}\"\n}",
-        "options": {}
+        "jsonBody": "={\n  \"step\": \"bg_removed\",\n  \"processed_url\": \"{{ $json.processed_url }}\"\n}"
       },
       "id": "update-content",
       "name": "Update Content",
-      "type": "httpRequest",
+      "type": "n8n-nodes-base.httprequest",
       "position": [720, 300]
     },
     {
@@ -62,7 +61,7 @@
         }
       },
       "id": "respond",
-      "name": "Respond",
+      "name": "Respond to Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "position": [960, 300]
     }
@@ -105,7 +104,7 @@
       "main": [
         [
           {
-            "node": "Respond",
+            "node": "Respond to Webhook",
             "type": "main",
             "index": 0
           }

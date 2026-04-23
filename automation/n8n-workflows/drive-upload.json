@@ -18,15 +18,14 @@
       "parameters": {
         "operation": "download",
         "bucket": "={{ $json.body.minioBucket }}",
-        "fileKey": "={{ $json.body.minioFilePath }}",
-        "options": {}
+        "fileKey": "={{ $json.body.minioFilePath }}"
       },
       "id": "minio-download",
       "name": "Download from MinIO",
-      "type": "awsS3",
+      "type": "n8n-nodes-base.s3",
       "position": [220, 300],
       "credentials": {
-        "minio": {
+        "s3": {
           "id": "1",
           "name": "MinIO Credentials"
         }
@@ -46,27 +45,25 @@
           ]
         },
         "sendBody": true,
-        "bodyContentType": "multipart-data",
-        "options": {}
+        "bodyContentType": "multipart-data"
       },
       "id": "google-drive-upload",
       "name": "Upload to Google Drive",
-      "type": "httpRequest",
+      "type": "n8n-nodes-base.httprequest",
       "position": [440, 300]
     },
     {
       "parameters": {
         "operation": "delete",
         "bucket": "={{ $json.body.minioBucket }}",
-        "fileKey": "={{ $json.body.minioFilePath }}",
-        "options": {}
+        "fileKey": "={{ $json.body.minioFilePath }}"
       },
       "id": "minio-delete",
       "name": "Delete from MinIO",
-      "type": "awsS3",
+      "type": "n8n-nodes-base.s3",
       "position": [660, 300],
       "credentials": {
-        "minio": {
+        "s3": {
           "id": "1",
           "name": "MinIO Credentials"
         }
@@ -78,12 +75,11 @@
         "url": "={{ $json.body.apiCallbackUrl }}",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"status\": \"uploaded\",\n  \"userId\": \"{{ $json.body.userId }}\",\n  \"fileName\": \"{{ $json.body.fileName }}\",\n  \"minioFilePath\": \"{{ $json.body.minioFilePath }}\"\n}",
-        "options": {}
+        "jsonBody": "={\n  \"status\": \"uploaded\",\n  \"userId\": \"{{ $json.body.userId }}\",\n  \"fileName\": \"{{ $json.body.fileName }}\",\n  \"minioFilePath\": \"{{ $json.body.minioFilePath }}\"\n}"
       },
       "id": "notify-backend",
       "name": "Notify Backend",
-      "type": "httpRequest",
+      "type": "n8n-nodes-base.httprequest",
       "position": [880, 300]
     },
     {
@@ -96,7 +92,7 @@
         }
       },
       "id": "respond-success",
-      "name": "Respond Success",
+      "name": "Respond to Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "position": [1100, 300]
     }
@@ -150,7 +146,7 @@
       "main": [
         [
           {
-            "node": "Respond Success",
+            "node": "Respond to Webhook",
             "type": "main",
             "index": 0
           }

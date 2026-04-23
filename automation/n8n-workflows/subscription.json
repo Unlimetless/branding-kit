@@ -21,6 +21,7 @@
       "id": "parse-bog-callback",
       "name": "Parse BOG Callback",
       "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [240, 300]
     },
     {
@@ -30,6 +31,7 @@
       "id": "determine-update",
       "name": "Determine Update",
       "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [480, 300]
     },
     {
@@ -38,24 +40,22 @@
         "url": "={{ $vars.BACKEND_API_URL }}/api/subscriptions/update-by-order",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"order_id\": \"{{ $json.orderId }}\",\n  \"status\": \"{{ $json.status }}\",\n  \"amount\": {{ $json.amount }},\n  \"currency\": \"{{ $json.currency }}\",\n  \"failure_reason\": \"{{ $json.failureReason }}\",\n  \"completed_at\": \"{{ $json.completed_at }}\"\n}",
-        "options": {}
+        "jsonBody": "={\n  \"order_id\": \"{{ $json.orderId }}\",\n  \"status\": \"{{ $json.status }}\",\n  \"amount\": {{ $json.amount }},\n  \"currency\": \"{{ $json.currency }}\",\n  \"failure_reason\": \"{{ $json.failureReason }}\",\n  \"completed_at\": \"{{ $json.completed_at }}\"\n}"
       },
       "id": "update-backend",
       "name": "Update Backend",
-      "type": "httpRequest",
+      "type": "n8n-nodes-base.httprequest",
       "position": [720, 300]
     },
     {
       "parameters": {
         "to": "={{ $json.email }}",
         "subject": "={{ $json.action === 'activate' ? 'Subscription Activated!' : $json.action === 'failed' ? 'Payment Failed' : 'Payment Update' }}",
-        "body": "={{ $json.action === 'activate' ? 'Your BrandFlow Pro subscription is now active. Enjoy unlimited content creation!' : $json.action === 'failed' ? 'Your payment failed. Please try again: https://brandflow.ge/subscription' : 'Your payment status has been updated.' }}",
-        "options": {}
+        "body": "={{ $json.action === 'activate' ? 'Your BrandFlow Pro subscription is now active. Enjoy unlimited content creation!' : $json.action === 'failed' ? 'Your payment failed. Please try again: https://brandflow.ge/subscription' : 'Your payment status has been updated.' }}"
       },
       "id": "send-email",
       "name": "Send Email",
-      "type": "n8n-nodes-base.emailSend",
+      "type": "n8n-nodes-base.sendEmail",
       "position": [960, 300]
     },
     {
@@ -65,29 +65,28 @@
       "id": "check-recovery",
       "name": "Check Recovery",
       "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [1200, 300]
     },
     {
       "parameters": {
         "amount": 3,
-        "unit": "days",
-        "options": {}
+        "unit": "days"
       },
       "id": "wait-3-days",
-      "name": "Wait 3 Days",
-      "type": "n8n-nodes-base.delay",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
       "position": [1440, 300]
     },
     {
       "parameters": {
         "to": "={{ $json.email }}",
         "subject": "We miss you!",
-        "body": "Your payment issue hasn't been resolved. Reactivate with 20% off: COMEBACK20\n\nhttps://brandflow.ge/subscription",
-        "options": {}
+        "body": "Your payment issue hasn't been resolved. Reactivate with 20% off: COMEBACK20\n\nhttps://brandflow.ge/subscription"
       },
       "id": "recovery-email",
       "name": "Recovery Email",
-      "type": "n8n-nodes-base.emailSend",
+      "type": "n8n-nodes-base.sendEmail",
       "position": [1680, 300]
     },
     {
@@ -99,32 +98,99 @@
         }
       },
       "id": "respond-bog",
-      "name": "Respond to BOG",
+      "name": "Respond to Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "position": [1920, 300]
     }
   ],
   "connections": {
     "BOG Webhook": {
-      "main": [[{"node": "Parse BOG Callback", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Parse BOG Callback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Parse BOG Callback": {
-      "main": [[{"node": "Determine Update", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Determine Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Determine Update": {
-      "main": [[{"node": "Update Backend", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Update Backend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Update Backend": {
-      "main": [[{"node": "Send Email", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Send Email": {
-      "main": [[{"node": "Check Recovery", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Check Recovery",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Check Recovery": {
-      "main": [[{"node": "Wait 3 Days", "type": "main", "index": 0}]]
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
-    "Wait 3 Days": {
-      "main": [[{"node": "Recovery Email", "type": "main", "index": 0}]]
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Recovery Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recovery Email": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {

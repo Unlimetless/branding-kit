@@ -21,6 +21,7 @@
       "id": "prepare-email",
       "name": "Prepare Content",
       "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [240, 300]
     },
     {
@@ -34,30 +35,28 @@
       },
       "id": "send-welcome",
       "name": "Send Welcome Email",
-      "type": "n8n-nodes-base.emailSend",
+      "type": "n8n-nodes-base.sendEmail",
       "position": [480, 300]
     },
     {
       "parameters": {
         "amount": 3,
-        "unit": "days",
-        "options": {}
+        "unit": "days"
       },
       "id": "wait-3-days",
-      "name": "Wait 3 Days",
-      "type": "n8n-nodes-base.delay",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
       "position": [720, 300]
     },
     {
       "parameters": {
         "to": "={{ $json.email }}",
         "subject": "={{ $json.reminderSubject }}",
-        "body": "={{ $json.locale === 'ka' ? 'თქვენ ჯერ პირველი პოსტი არ შეგიქმნიათ. დაიწყეთ ახლა!' : $json.locale === 'ru' ? 'Вы ещё не создали свой первый пост. Начните сейчас!' : 'You haven\\'t created your first post yet. Get started now!' }}",
-        "options": {}
+        "body": "={{ $json.locale === 'ka' ? 'თქვენ ჯერ პირველი პოსტი არ შეგიქმნიათ. დაიწყეთ ახლა!' : $json.locale === 'ru' ? 'Вы ещё не создали свой первый пост. Начните сейчас!' : 'You haven\\'t created your first post yet. Get started now!' }}"
       },
       "id": "send-reminder",
       "name": "Send Reminder",
-      "type": "n8n-nodes-base.emailSend",
+      "type": "n8n-nodes-base.sendEmail",
       "position": [960, 300]
     },
     {
@@ -70,7 +69,7 @@
         }
       },
       "id": "respond-success",
-      "name": "Respond",
+      "name": "Respond to Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "position": [1200, 300]
     }
@@ -102,14 +101,14 @@
       "main": [
         [
           {
-            "node": "Wait 3 Days",
+            "node": "Wait",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Wait 3 Days": {
+    "Wait": {
       "main": [
         [
           {
@@ -124,7 +123,7 @@
       "main": [
         [
           {
-            "node": "Respond",
+            "node": "Respond to Webhook",
             "type": "main",
             "index": 0
           }

@@ -14,8 +14,8 @@
         }
       },
       "id": "schedule-trigger",
-      "name": "Every Hour",
-      "type": "n8n-nodes-base.trigger",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
       "position": [0, 300]
     },
     {
@@ -30,10 +30,10 @@
       },
       "id": "minio-list",
       "name": "List Temp Files",
-      "type": "awsS3",
+      "type": "n8n-nodes-base.s3",
       "position": [240, 300],
       "credentials": {
-        "minio": {
+        "s3": {
           "id": "1",
           "name": "MinIO Credentials"
         }
@@ -46,16 +46,16 @@
       "id": "filter-old-files",
       "name": "Filter Files > 30min",
       "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [480, 300]
     },
     {
       "parameters": {
         "batchSize": 1,
-        "doneOutput": "atIndex",
-        "options": {}
+        "doneOutput": "atIndex"
       },
       "id": "loop-over-files",
-      "name": "Loop Over Files",
+      "name": "Loop Over Items",
       "type": "n8n-nodes-base.splitInBatches",
       "position": [720, 300]
     },
@@ -63,15 +63,14 @@
       "parameters": {
         "operation": "delete",
         "bucket": "={{ $json.bucket }}",
-        "fileKey": "={{ $json.key }}",
-        "options": {}
+        "fileKey": "={{ $json.key }}"
       },
       "id": "delete-file",
       "name": "Delete File",
-      "type": "awsS3",
+      "type": "n8n-nodes-base.s3",
       "position": [960, 300],
       "credentials": {
-        "minio": {
+        "s3": {
           "id": "1",
           "name": "MinIO Credentials"
         }
@@ -81,17 +80,16 @@
       "parameters": {
         "to": "={{ $json.body.adminEmail || 'admin@brandflow.ge' }}",
         "subject": "BrandFlow Cleanup Report",
-        "body": "={{ $json.body.deletedCount + ' files deleted. Total freed: ' + $json.body.freedSpace + ' bytes' }}",
-        "options": {}
+        "body": "={{ $json.body.deletedCount + ' files deleted. Total freed: ' + $json.body.freedSpace + ' bytes' }}"
       },
       "id": "email-report",
-      "name": "Send Report",
-      "type": "n8n-nodes-base.emailSend",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.sendEmail",
       "position": [1200, 300]
     }
   ],
   "connections": {
-    "Every Hour": {
+    "Schedule Trigger": {
       "main": [
         [
           {
@@ -117,14 +115,14 @@
       "main": [
         [
           {
-            "node": "Loop Over Files",
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Loop Over Files": {
+    "Loop Over Items": {
       "main": [
         [
           {

@@ -21,17 +21,17 @@
       "id": "parse-input",
       "name": "Parse Input",
       "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [240, 300]
     },
     {
       "parameters": {
         "method": "GET",
-        "url": "={{ $vars.BACKEND_API_URL }}/api/ai-cache/{{ $json.cacheKey }}",
-        "options": {}
+        "url": "={{ $vars.BACKEND_API_URL }}/api/ai-cache/{{ $json.cacheKey }}"
       },
       "id": "check-cache",
       "name": "Check Cache",
-      "type": "httpRequest",
+      "type": "n8n-nodes-base.httprequest",
       "position": [480, 300]
     },
     {
@@ -40,12 +40,11 @@
         "url": "={{ $vars.GEMINI_API_URL }}/generate",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"prompt\": \"Generate a social media caption for a {{ $json.sector }} business. Tone: {{ $json.brandTone }}. Language: {{ $json.locale }}. Respond in JSON format: {\\\"caption\\\": \\\"...\\\", \\\"hashtags\\\": [\\\"#tag1\\\", \\\"#tag2\\\"]}\",\n  \"image_url\": \"{{ $json.imageUrl }}\",\n  \"locale\": \"{{ $json.locale }}\"\n}",
-        "options": {}
+        "jsonBody": "={\n  \"prompt\": \"Generate a social media caption for a {{ $json.sector }} business. Tone: {{ $json.brandTone }}. Language: {{ $json.locale }}.\",\n  \"image_url\": \"{{ $json.imageUrl }}\",\n  \"locale\": \"{{ $json.locale }}\"\n}"
       },
       "id": "gemini-caption",
       "name": "Generate Caption",
-      "type": "httpRequest",
+      "type": "n8n-nodes-base.httprequest",
       "position": [720, 300]
     },
     {
@@ -54,12 +53,11 @@
         "url": "={{ $vars.BACKEND_API_URL }}/api/ai-cache/store",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"cache_key\": \"{{ $json.cacheKey }}\",\n  \"user_id\": \"{{ $json.userId }}\",\n  \"result\": {{ $json.geminiResult }},\n  \"model\": \"gemini-flash\",\n  \"locale\": \"{{ $json.locale }}\"\n}",
-        "options": {}
+        "jsonBody": "={\n  \"cache_key\": \"{{ $json.cacheKey }}\",\n  \"user_id\": \"{{ $json.userId }}\",\n  \"result\": {{ $json.geminiResult }},\n  \"model\": \"gemini-flash\",\n  \"locale\": \"{{ $json.locale }}\"\n}"
       },
       "id": "store-cache",
       "name": "Store Cache",
-      "type": "httpRequest",
+      "type": "n8n-nodes-base.httprequest",
       "position": [960, 300]
     },
     {
@@ -68,12 +66,11 @@
         "url": "={{ $vars.BACKEND_API_URL }}/api/contents/{{ $json.contentId }}/caption",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"caption\": \"{{ $json.caption }}\",\n  \"hashtags\": {{ $json.hashtags }},\n  \"locale\": \"{{ $json.locale }}\"\n}",
-        "options": {}
+        "jsonBody": "={\n  \"caption\": \"{{ $json.caption }}\",\n  \"hashtags\": {{ $json.hashtags }},\n  \"locale\": \"{{ $json.locale }}\"\n}"
       },
       "id": "update-content",
       "name": "Update Content",
-      "type": "httpRequest",
+      "type": "n8n-nodes-base.httprequest",
       "position": [1200, 300]
     },
     {
@@ -88,7 +85,7 @@
         }
       },
       "id": "respond",
-      "name": "Respond",
+      "name": "Respond to Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "position": [1440, 300]
     }
@@ -153,7 +150,7 @@
       "main": [
         [
           {
-            "node": "Respond",
+            "node": "Respond to Webhook",
             "type": "main",
             "index": 0
           }
