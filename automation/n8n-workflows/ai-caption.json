@@ -8,7 +8,7 @@
         "method": "POST",
         "responseMode": "responseNode"
       },
-      "id": "webhook-trigger",
+      "id": "uuid-webhook-trigger",
       "name": "Webhook Trigger",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
@@ -18,7 +18,7 @@
       "parameters": {
         "jsCode": "const body = $json.body;\nconst crypto = require('crypto');\nconst cacheKey = crypto.createHash('md5').update(body.contentId + body.locale + 'caption').digest('hex');\n\nreturn [{\n  json: {\n    contentId: body.contentId,\n    userId: body.userId,\n    locale: body.locale || 'ka',\n    cacheKey: cacheKey,\n    sector: body.sector || 'general',\n    brandTone: body.brandTone || 'professional',\n    imageUrl: body.imageUrl\n  }\n}];"
       },
-      "id": "parse-input",
+      "id": "uuid-parse-input",
       "name": "Parse Input",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -29,7 +29,7 @@
         "method": "GET",
         "url": "={{ $vars.BACKEND_API_URL }}/api/ai-cache/{{ $json.cacheKey }}"
       },
-      "id": "check-cache",
+      "id": "uuid-check-cache",
       "name": "Check Cache",
       "type": "n8n-nodes-base.httprequest",
       "position": [480, 300]
@@ -42,7 +42,7 @@
         "specifyBody": "json",
         "jsonBody": "={\n  \"prompt\": \"Generate a social media caption for a {{ $json.sector }} business. Tone: {{ $json.brandTone }}. Language: {{ $json.locale }}.\",\n  \"image_url\": \"{{ $json.imageUrl }}\",\n  \"locale\": \"{{ $json.locale }}\"\n}"
       },
-      "id": "gemini-caption",
+      "id": "uuid-gemini-caption",
       "name": "Generate Caption",
       "type": "n8n-nodes-base.httprequest",
       "position": [720, 300]
@@ -55,7 +55,7 @@
         "specifyBody": "json",
         "jsonBody": "={\n  \"cache_key\": \"{{ $json.cacheKey }}\",\n  \"user_id\": \"{{ $json.userId }}\",\n  \"result\": {{ $json.geminiResult }},\n  \"model\": \"gemini-flash\",\n  \"locale\": \"{{ $json.locale }}\"\n}"
       },
-      "id": "store-cache",
+      "id": "uuid-store-cache",
       "name": "Store Cache",
       "type": "n8n-nodes-base.httprequest",
       "position": [960, 300]
@@ -68,7 +68,7 @@
         "specifyBody": "json",
         "jsonBody": "={\n  \"caption\": \"{{ $json.caption }}\",\n  \"hashtags\": {{ $json.hashtags }},\n  \"locale\": \"{{ $json.locale }}\"\n}"
       },
-      "id": "update-content",
+      "id": "uuid-update-content",
       "name": "Update Content",
       "type": "n8n-nodes-base.httprequest",
       "position": [1200, 300]
@@ -84,7 +84,7 @@
           "cached": false
         }
       },
-      "id": "respond",
+      "id": "uuid-respond",
       "name": "Respond to Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "position": [1440, 300]
@@ -158,13 +158,8 @@
       ]
     }
   },
-  "settings": {
-    "executionOrder": "v1"
-  },
+  "settings": {},
   "staticData": null,
-  "tags": ["ai", "caption", "gemini"],
-  "meta": {
-    "templateCredsSetup": false,
-    "templateId": "ai-caption"
-  }
+  "tags": [],
+  "meta": {}
 }
