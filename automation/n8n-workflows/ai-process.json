@@ -7,15 +7,16 @@
         "method": "POST",
         "responseMode": "responseNode"
       },
-      "id": "trigger",
+      "id": "webhook-trigger",
       "name": "Webhook Trigger",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [0, 300]
+      "position": [0, 300],
+      "webhookId": "brandflow-ai-process"
     },
     {
       "parameters": {
-        "jsCode": "const body = $json.body;\n\nreturn [{\n  json: {\n    contentId: body.contentId,\n    userId: body.userId,\n    operation: body.operation || 'full',\n    platform: body.platform || 'instagram_feed',\n    options: body.options || {}\n  }\n}];"
+        "jsCode": "const body = $json.body;\n\nreturn [{\n  json: {\n    contentId: body.contentId,\n    userId: body.userId,\n    operation: body.operation || 'full',\n    platform: body.platform || 'instagram_feed',\n    originalUrl: body.originalUrl\n  }\n}];"
       },
       "id": "parse-input",
       "name": "Parse Input",
@@ -24,28 +25,17 @@
     },
     {
       "parameters": {
-        "method": "GET",
-        "url": "={{ $env.BACKEND_API_URL }}/api/contents/{{ $json.contentId }}",
-        "options": {}
-      },
-      "id": "get-content",
-      "name": "Get Content Info",
-      "type": "httpRequest",
-      "position": [480, 300]
-    },
-    {
-      "parameters": {
         "method": "POST",
         "url": "={{ $env.CARVEKIT_URL }}/remove-background",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"image_url\": \"{{ $json.original_url }}\"\n}",
+        "jsonBody": "={\n  \"image_url\": \"{{ $json.originalUrl }}\"\n}",
         "options": {}
       },
       "id": "bg-remove",
       "name": "Background Remove",
       "type": "httpRequest",
-      "position": [720, 300]
+      "position": [480, 300]
     },
     {
       "parameters": {
@@ -59,7 +49,7 @@
       "id": "update-content",
       "name": "Update Content",
       "type": "httpRequest",
-      "position": [960, 300]
+      "position": [720, 300]
     },
     {
       "parameters": {
@@ -74,7 +64,7 @@
       "id": "respond",
       "name": "Respond",
       "type": "n8n-nodes-base.respondToWebhook",
-      "position": [1200, 300]
+      "position": [960, 300]
     }
   ],
   "connections": {
@@ -82,9 +72,6 @@
       "main": [[{"node": "Parse Input", "type": "main", "index": 0}]]
     },
     "Parse Input": {
-      "main": [[{"node": "Get Content Info", "type": "main", "index": 0}]]
-    },
-    "Get Content Info": {
       "main": [[{"node": "Background Remove", "type": "main", "index": 0}]]
     },
     "Background Remove": {

@@ -7,11 +7,12 @@
         "method": "POST",
         "responseMode": "responseNode"
       },
-      "id": "trigger",
+      "id": "webhook-trigger",
       "name": "Webhook Trigger",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [0, 300]
+      "position": [0, 300],
+      "webhookId": "brandflow-ai-caption"
     },
     {
       "parameters": {
