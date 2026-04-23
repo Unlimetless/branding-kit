@@ -19,16 +19,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'npm'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
 
       - name: Install dependencies
         working-directory: ./brandflow
-        run: npm ci
+        run: pnpm install --ignore-workspace
 
       - name: Type check
         working-directory: ./brandflow
-        run: npm run typecheck || true
+        run: pnpm run typecheck || true
 
       - name: Build
         working-directory: ./brandflow
-        run: npm run build || true
+        run: pnpm run build || true
