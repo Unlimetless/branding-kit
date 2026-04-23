@@ -111,7 +111,7 @@
       },
       "id": "respond-success",
       "name": "Respond to Webhook",
-      "type": "n8n-nodes-base.respondToWebhook",
+      "type": "n8n-nodes-base.respondtowebhook",
       "position": [1680, 300]
     }
   ],
@@ -200,7 +200,6 @@
   "staticData": null,
   "tags": ["video", "render", "notification"],
   "meta": {
-    "templateCredsSetup": false,
-    "templateId": "render-notify"
+    "templateCredsSetupComplete": false
   }
 }

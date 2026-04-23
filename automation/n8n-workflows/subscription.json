@@ -99,7 +99,7 @@
       },
       "id": "respond-bog",
       "name": "Respond to Webhook",
-      "type": "n8n-nodes-base.respondToWebhook",
+      "type": "n8n-nodes-base.respondtowebhook",
       "position": [1920, 300]
     }
   ],
@@ -199,7 +199,6 @@
   "staticData": null,
   "tags": ["payment", "subscription", "bog"],
   "meta": {
-    "templateCredsSetup": false,
-    "templateId": "subscription"
+    "templateCredsSetupComplete": false
   }
 }

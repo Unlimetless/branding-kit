@@ -56,7 +56,7 @@
       },
       "id": "loop-over-files",
       "name": "Loop Over Items",
-      "type": "n8n-nodes-base.splitInBatches",
+      "type": "n8n-nodes-base.splitinbatches",
       "position": [720, 300]
     },
     {
@@ -140,7 +140,6 @@
   "staticData": null,
   "tags": ["maintenance", "storage", "cleanup"],
   "meta": {
-    "templateCredsSetup": false,
-    "templateId": "cleanup"
+    "templateCredsSetupComplete": false
   }
 }

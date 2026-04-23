@@ -93,7 +93,7 @@
       },
       "id": "respond-success",
       "name": "Respond to Webhook",
-      "type": "n8n-nodes-base.respondToWebhook",
+      "type": "n8n-nodes-base.respondtowebhook",
       "position": [1100, 300]
     }
   ],
@@ -160,7 +160,6 @@
   "staticData": null,
   "tags": ["storage", "google-drive", "minio"],
   "meta": {
-    "templateCredsSetup": false,
-    "templateId": "drive-upload"
+    "templateCredsSetupComplete": false
   }
 }

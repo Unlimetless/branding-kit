@@ -62,7 +62,7 @@
       },
       "id": "respond",
       "name": "Respond to Webhook",
-      "type": "n8n-nodes-base.respondToWebhook",
+      "type": "n8n-nodes-base.respondtowebhook",
       "position": [960, 300]
     }
   ],
@@ -118,7 +118,6 @@
   "staticData": null,
   "tags": ["ai", "process", "background-removal"],
   "meta": {
-    "templateCredsSetup": false,
-    "templateId": "ai-process"
+    "templateCredsSetupComplete": false
   }
 }
