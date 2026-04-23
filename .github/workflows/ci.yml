@@ -20,6 +20,11 @@ jobs:
         with:
           node-version: '24'
 
+      - name: Create lock file for npm
+        run: |
+          touch brandflow/package-lock.json
+          echo '{"lockfileVersion": 3}' > brandflow/package-lock.json
+
       - name: Install pnpm
         run: npm install -g pnpm
 
