@@ -45,7 +45,7 @@
       },
       "id": "update-backend",
       "name": "Update Backend",
-      "type": "n8n-nodes-base.httprequest",
+      "type": "n8n-nodes-base.httpRequest",
       "position": [720, 300]
     },
     {

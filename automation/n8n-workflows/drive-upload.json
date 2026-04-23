@@ -44,7 +44,7 @@
       },
       "id": "google-drive-upload",
       "name": "Upload to Google Drive",
-      "type": "n8n-nodes-base.httprequest",
+      "type": "n8n-nodes-base.httpRequest",
       "position": [440, 300]
     },
     {
@@ -75,7 +75,7 @@
       },
       "id": "notify-backend",
       "name": "Notify Backend",
-      "type": "n8n-nodes-base.httprequest",
+      "type": "n8n-nodes-base.httpRequest",
       "position": [880, 300]
     },
     {

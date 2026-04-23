@@ -35,7 +35,7 @@
       },
       "id": "bg-remove",
       "name": "Background Remove",
-      "type": "n8n-nodes-base.httprequest",
+      "type": "n8n-nodes-base.httpRequest",
       "position": [480, 300]
     },
     {
@@ -49,7 +49,7 @@
       },
       "id": "update-content",
       "name": "Update Content",
-      "type": "n8n-nodes-base.httprequest",
+      "type": "n8n-nodes-base.httpRequest",
       "position": [720, 300]
     },
     {

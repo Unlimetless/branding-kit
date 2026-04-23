@@ -33,7 +33,7 @@
       },
       "id": "uuid-check-cache",
       "name": "Check Cache",
-      "type": "n8n-nodes-base.httprequest",
+      "type": "n8n-nodes-base.httpRequest",
       "position": [480, 300]
     },
     {
@@ -47,7 +47,7 @@
       },
       "id": "uuid-gemini-caption",
       "name": "Generate Caption",
-      "type": "n8n-nodes-base.httprequest",
+      "type": "n8n-nodes-base.httpRequest",
       "position": [720, 300]
     },
     {
@@ -61,7 +61,7 @@
       },
       "id": "uuid-store-cache",
       "name": "Store Cache",
-      "type": "n8n-nodes-base.httprequest",
+      "type": "n8n-nodes-base.httpRequest",
       "position": [960, 300]
     },
     {
@@ -75,7 +75,7 @@
       },
       "id": "uuid-update-content",
       "name": "Update Content",
-      "type": "n8n-nodes-base.httprequest",
+      "type": "n8n-nodes-base.httpRequest",
       "position": [1200, 300]
     },
     {

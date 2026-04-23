@@ -54,7 +54,7 @@
       },
       "id": "upload-drive",
       "name": "Upload to Drive",
-      "type": "n8n-nodes-base.httprequest",
+      "type": "n8n-nodes-base.httpRequest",
       "position": [720, 300]
     },
     {
