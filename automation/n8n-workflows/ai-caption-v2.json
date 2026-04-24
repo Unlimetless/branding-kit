@@ -1,0 +1,119 @@
+{
+  "name": "BrandFlow AI Caption",
+  "active": false,
+  "nodes": [
+    {
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "brandflow-ai-caption",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "credentials": {},
+      "continueOnFail": false
+    },
+    {
+      "id": "generate-caption",
+      "name": "Generate AI Caption",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "parameters": {
+        "jsCode": "// Generate AI caption using Gemini\nconst prompt = $input.first().json.prompt || 'Default prompt';\nconst contentId = $input.first().json.contentId || 'unknown';\n\n// Simulate AI caption generation\nconst caption = `Georgian Restaurant Promo\n\nTaste the authentic flavors of Georgia!\nFresh khinkali, aromatic churchkhela, and traditional wine.\n\nVisit us today! 🍷🥟\n\n#GeorgianCuisine #FoodPorn #Tbilisi`;\n\nreturn {\n  json: {\n    contentId,\n    prompt,\n    caption,\n    generatedAt: new Date().toISOString()\n  }\n};"
+      },
+      "credentials": {},
+      "continueOnFail": false
+    },
+    {
+      "id": "upload-drive",
+      "name": "Upload to Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 2,
+      "position": [500, 300],
+      "parameters": {
+        "operation": "upload",
+        "fileName": "={{ $json.caption.substring(0, 30) }}.txt",
+        "fileContent": "={{ $json.caption }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "id",
+          "value": ""
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "1",
+          "name": "Google Drive"
+        }
+      },
+      "continueOnFail": false
+    },
+    {
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondtowebhook",
+      "position": [750, 300],
+      "parameters": {
+        "respondWith": {},
+        "respondWithSuccess": true,
+        "responseBody": {
+          "success": true,
+          "contentId": "={{ $json('Generate AI Caption').json.contentId }}",
+          "caption": "={{ $json('Generate AI Caption').json.caption }}",
+          "message": "AI caption generated successfully"
+        }
+      },
+      "credentials": {},
+      "continueOnFail": false
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Generate AI Caption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate AI Caption": {
+      "main": [
+        [
+          {
+            "node": "Upload to Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "meta": {
+    "templateCredsSetupComplete": false
+  }
+}
