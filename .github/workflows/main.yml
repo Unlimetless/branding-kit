@@ -26,7 +26,7 @@ jobs:
         run: |
           cd brandflow
           rm -f pnpm-lock.yaml
-          pnpm install
+          pnpm install --ignore-scripts
 
       - name: Type check
         run: cd brandflow && pnpm run typecheck || true
