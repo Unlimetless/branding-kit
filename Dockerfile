@@ -7,11 +7,12 @@ COPY brandflow/package.json brandflow/pnpm-lock.yaml brandflow/pnpm-workspace.ya
 COPY brandflow/packages ./packages
 COPY brandflow/apps/web ./apps/web
 
+ENV NODE_ENV=development
+
 WORKDIR /app/apps/web
-RUN pnpm install -w --ignore-scripts
+RUN pnpm install -w
 
 WORKDIR /app
-ENV NODE_ENV=development
 RUN pnpm --filter @brandflow/web build
 
 FROM base AS runner
