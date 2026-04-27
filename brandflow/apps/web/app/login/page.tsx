@@ -1,10 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
-  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
   const handleGoogleLogin = async () => {
@@ -13,7 +11,9 @@ export default function LoginPage() {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/google`, {
         method: 'POST',
       })
-      const { url } = await response.json()
+      const data = await response.json() as { url: string }
+      const { url } = data
+      // @ts-expect-error - window is available in client components
       window.location.href = url
     } catch (error) {
       console.error('Login failed:', error)

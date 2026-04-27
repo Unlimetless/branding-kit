@@ -2,8 +2,25 @@
   "extends": "@brandflow/config/tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "types": ["node"]
+    "types": [
+      "node"
+    ],
+    "noEmit": true,
+    "incremental": true,
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "next-env.d.ts",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

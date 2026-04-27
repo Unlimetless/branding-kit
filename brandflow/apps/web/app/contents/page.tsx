@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import type { Route } from 'next'
 
 interface Content {
   id: string
@@ -13,7 +14,7 @@ interface Content {
 }
 
 export default function ContentsPage() {
-  const [contents, setContents] = useState<Content[]>([
+  const [contents] = useState<Content[]>([
     { id: '1', type: 'image', platform: 'instagram', status: 'published', createdAt: '2026-04-22' },
     { id: '2', type: 'image', platform: 'facebook', status: 'published', createdAt: '2026-04-21' },
     { id: '3', type: 'video', platform: 'tiktok', status: 'processing', createdAt: '2026-04-23' },
@@ -46,7 +47,7 @@ export default function ContentsPage() {
       <main style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
           <h2 style={{ fontSize: '1.5rem' }}>Contents</h2>
-          <Link href="/contents/new" style={{
+          <Link href={"/contents/new" as Route} style={{
             padding: '0.75rem 1.5rem',
             background: '#6366f1',
             color: 'white',

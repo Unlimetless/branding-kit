@@ -11,7 +11,7 @@ COPY brandflow/apps/web ./apps/web
 ENV NODE_ENV=development
 
 WORKDIR /app/apps/web
-RUN pnpm install -w
+RUN pnpm install -w || pnpm install -w
 
 WORKDIR /app
 RUN pnpm --filter @brandflow/web build
