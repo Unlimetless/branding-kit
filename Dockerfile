@@ -3,13 +3,15 @@ WORKDIR /app
 
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
+COPY brandflow/package.json brandflow/pnpm-lock.yaml brandflow/pnpm-workspace.yaml brandflow/turbo.json ./
+COPY brandflow/packages ./packages
 COPY brandflow/apps/web ./apps/web
 
 WORKDIR /app/apps/web
-RUN pnpm install
+RUN pnpm install -w --ignore-scripts
 
-ENV NODE_ENV=production
-RUN pnpm run build
+WORKDIR /app
+RUN pnpm --filter @brandflow/web build
 
 FROM base AS runner
 
