@@ -7,7 +7,7 @@ COPY brandflow/package.json brandflow/pnpm-lock.yaml brandflow/pnpm-workspace.ya
 COPY brandflow/packages ./packages
 COPY brandflow/apps/web ./apps/web
 
-RUN rm -rf node_modules && rm -f pnpm-lock.yaml && pnpm install -w
+RUN rm -rf node_modules && rm -f pnpm-lock.yaml && pnpm install -w --force
 RUN pnpm --filter @brandflow/web build
 
 FROM base AS runner
