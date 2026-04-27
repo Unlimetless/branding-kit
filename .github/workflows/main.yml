@@ -19,10 +19,14 @@ jobs:
         with:
           node-version: '24'
 
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@9 --activate
+
       - name: Install dependencies
         run: |
           cd brandflow
-          npm install
+          rm -f pnpm-lock.yaml
+          pnpm install
 
       - name: Type check
         run: cd brandflow && pnpm run typecheck || true
