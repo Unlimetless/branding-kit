@@ -37,6 +37,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd brandflow
+          rm -f pnpm-lock.yaml
           pnpm install --no-frozen-lockfile
 
       - name: Type check
