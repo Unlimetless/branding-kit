@@ -3,27 +3,21 @@ WORKDIR /app
 
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-COPY brandflow/apps/web/package.json brandflow/apps/web/
-WORKDIR /app/brandflow/apps/web
-
-ENV NODE_ENV=development
-RUN pnpm install
-
-WORKDIR /app
-
-COPY brandflow/packages ./packages
 COPY brandflow/apps/web ./apps/web
 
-WORKDIR /app/brandflow/apps/web
+WORKDIR /app/apps/web
+RUN pnpm install
+
+ENV NODE_ENV=production
 RUN pnpm run build
 
 FROM base AS runner
 
 WORKDIR /app
 
-COPY --from=base /app/brandflow/apps/web/.next/standalone ./
-COPY --from=base /app/brandflow/apps/web/.next/static ./.next/static
-COPY --from=base /app/brandflow/apps/web/public ./public
+COPY --from=base /app/apps/web/.next/standalone ./
+COPY --from=base /app/apps/web/.next/static ./.next/static
+COPY --from=base /app/apps/web/public ./public
 
 ENV NODE_ENV=production
 ENV PORT=3000
