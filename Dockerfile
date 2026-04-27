@@ -11,6 +11,7 @@ WORKDIR /app/apps/web
 RUN pnpm install -w --ignore-scripts
 
 WORKDIR /app
+ENV NODE_ENV=development
 RUN pnpm --filter @brandflow/web build
 
 FROM base AS runner
