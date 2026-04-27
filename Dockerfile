@@ -7,7 +7,7 @@ COPY brandflow/package.json brandflow/pnpm-lock.yaml brandflow/pnpm-workspace.ya
 COPY brandflow/packages ./packages
 COPY brandflow/apps/web ./apps/web
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 RUN pnpm --filter @brandflow/web build
 
 FROM base AS runner
