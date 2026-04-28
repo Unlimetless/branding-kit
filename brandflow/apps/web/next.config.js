@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ['@brandflow/ui', '@brandflow/i18n', '@brandflow/auth'],
+  transpilePackages: ['@brandflow/auth', '@brandflow/i18n'],
   typedRoutes: false,
   output: 'standalone',
 }
